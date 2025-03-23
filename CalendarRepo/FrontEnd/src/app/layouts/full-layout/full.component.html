@@ -1,0 +1,34 @@
+<div class="container">
+  <!-- Sidebar -->
+  <nav class="sidebar" [class.active]="isSidebarOpen">
+    <button class="close-btn" (click)="toggleSidebar()">×</button>
+    <ul>
+      <li><a href="/calendar">Calendario</a></li>
+      <li><a href="/report">Report</a></li>
+      <li><a href="/dashboard">Dashboard</a></li>
+      <li><a href="#">Contact</a></li>
+    </ul>
+    <button class="logout-btn" (click)="doLogout()">
+      <span>Logout</span>
+    </button>
+  </nav>
+
+  <!-- Main Content -->
+  <div class="main-content">
+    <!-- Header -->
+    <header>
+      <button class="menu-btn" (click)="toggleSidebar()">☰</button>
+      <h1>My Angular App</h1>
+    </header>
+
+    <!-- Body Content -->
+    <main>
+      <router-outlet></router-outlet>
+    </main>
+
+    <!-- Footer -->
+    <footer>
+      <p>© 2025 My Angular App. All rights reserved.</p>
+    </footer>
+  </div>
+</div>

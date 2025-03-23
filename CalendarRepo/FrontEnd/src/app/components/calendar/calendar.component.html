@@ -1,0 +1,31 @@
+<div class="calendar-header">
+  <div class="center-buttons">
+    <button mat-button (click)="previousYear()">« Anno Precedente</button>
+    <button mat-button (click)="previousMonth()">‹ Mese Precedente</button>
+    <span class="calendar-title">{{ viewDate | date: 'MMMM yyyy' }}</span>
+    <button mat-button (click)="nextMonth()">Mese Successivo ›</button>
+    <button mat-button (click)="nextYear()">Anno Successivo »</button>
+  </div>
+  <div class="reminder-buttons">
+    <button mat-button color="primary" (click)="startReminders()">Attiva Promemoria</button>
+    <button mat-button color="warn" (click)="stopReminders()">Disattiva Promemoria</button>
+  </div>
+  <button id="export" mat-button (click)="exportData()">Export</button>
+  <button mat-button color="primary" (click)="exportCSV()">Export CSV</button>
+  <button mat-button color="accent" (click)="exportPDF()">Export PDF</button>
+
+  <!-- Importazione: bottone per importare JSON -->
+  <button mat-button color="warn" (click)="triggerFileInput()">Import JSON</button>
+
+  <!-- File input nascosto -->
+  <input type="file" id="fileInput" accept=".json" (change)="importJSON($event)">
+</div>
+
+<app-filter (filterChange)="applyFilter($event)"></app-filter>
+
+
+<mwl-calendar-month-view [viewDate]="viewDate" [events]="calendarEvents" (eventClicked)="eventClicked($event)"
+  (dayClicked)="dayClicked($event)">
+</mwl-calendar-month-view>
+
+<app-spinner *ngIf="showSpinner"></app-spinner>

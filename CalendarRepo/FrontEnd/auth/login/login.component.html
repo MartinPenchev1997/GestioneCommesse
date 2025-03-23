@@ -1,0 +1,32 @@
+<div class="login-container">
+  <div class="login-card">
+    <h2>Accedi al Sistema</h2>
+    <form #loginForm="ngForm">
+      <div class="form-group">
+        <label for="username">Username</label>
+        <input
+          type="text"
+          id="username"
+          name="username"
+          required
+          [(ngModel)]="credentials.username"
+          placeholder="Inserisci il tuo username" />
+      </div>
+      <div class="form-group">
+        <label for="password">Password</label>
+        <input
+          type="password"
+          id="password"
+          name="password"
+          required
+          [(ngModel)]="credentials.password"
+          placeholder="Inserisci la tua password" />
+      </div>
+      <div class="button-wrapper">
+        <button [disabled]="loginForm.invalid" (click)="login()">Login</button>
+        <button [disabled]="loginForm.invalid" (click)="register()">Registrati</button>
+      </div>
+    </form>
+    <p class="message" *ngIf="message">{{ message }}</p>
+  </div>
+</div>

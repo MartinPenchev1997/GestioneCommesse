@@ -1,0 +1,5 @@
+﻿CalendarRepo/BackEnd/CalendarRepoWebApi/.vs
+CalendarRepo/BackEnd/CalendarRepoWebApi/bin
+CalendarRepo/BackEnd/CalendarRepoWebApi/obj
+CalendarRepo/BackEnd/CalendarRepoWebApi/CalendarRepo.csproj.user
+*.sln
