@@ -5,6 +5,7 @@ import { Observable, tap } from 'rxjs';
 import { Router } from '@angular/router';
 
 export interface AuthResponse {
+  LoggedUser: string;
   Token: string;
   RefreshToken: string;
 }
@@ -12,6 +13,7 @@ export interface AuthResponse {
 export interface AuthRequest {
   username: string;
   password: string;
+  role: string;
 }
 
 @Injectable({
@@ -31,6 +33,14 @@ export class AuthService {
     return true;
   }
 
+  getLoggedUser(): string {
+    const user = localStorage.getItem('authUser');
+    if (!user || user === 'undefined' || user === 'null')
+      return '';
+
+    return user;
+  }
+
   login(request: AuthRequest): Observable<AuthResponse> {
     return this.http.post<AuthResponse>(`${this.baseUrl}/login`, request);
   }
@@ -48,6 +58,7 @@ export class AuthService {
       tap(() => {
         localStorage.removeItem('token');
         localStorage.removeItem('refreshToken');
+        localStorage.removeItem('authUser');
       })
     );
   }

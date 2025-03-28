@@ -1,0 +1,29 @@
+<div class="signin-container">
+  <div class="signin-card">
+    <h2>Crea un Nuovo Account</h2>
+    <form #signinForm="ngForm" (ngSubmit)="register(signinForm)">
+      <div class="form-group">
+        <label for="username">Username</label>
+        <input type="text" id="username" name="username" required [(ngModel)]="credentials.username" placeholder="Inserisci il tuo username" />
+      </div>
+      <div class="form-group">
+        <label for="password">Password</label>
+        <input type="password" id="password" name="password" required [(ngModel)]="credentials.password" placeholder="Inserisci la tua password" />
+      </div>
+      <div class="form-group">
+        <label for="confirmPassword">Conferma Password</label>
+        <input type="password" id="confirmPassword" name="confirmPassword" required [(ngModel)]="confirmPassword" placeholder="Conferma la password" />
+      </div>
+      <div class="form-group">
+        <label for="role">Ruolo</label>
+        <select id="role" name="role" required [(ngModel)]="credentials.role">
+          <option value="User">User</option>
+          <option value="Admin">Admin</option>
+          <!-- Aggiungi altri ruoli se necessario -->
+        </select>
+      </div>
+      <button type="submit" [disabled]="signinForm.invalid">Registrati</button>
+    </form>
+    <p class="message" (mousemove)="onHover()" *ngIf="message">{{ message }}</p>
+  </div>
+</div>

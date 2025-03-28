@@ -8,19 +8,14 @@ using CalendarRepo.Database;
 using System.IdentityModel.Tokens.Jwt;
 
 var builder = WebApplication.CreateBuilder(args);
-
-
 // Configurazione del DB (SQL Server)
 builder.Services.AddDbContext<AppDbContext>(options =>
     options.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection")));
-
 
 // Registrazione di Repository e UnitOfWork
 builder.Services.AddScoped<IUserRepository, UserRepository>();
 builder.Services.AddScoped<ICommessaRepository, CommessaRepository>();
 builder.Services.AddScoped<IUnitOfWork, UnitOfWork>();
-
-//builder.Services.AddHttpClient<ChatGPTHelper>();
 
 // Registrazione dei servizi per la generazione dei token
 builder.Services.AddScoped<ITokenService, TokenService>();

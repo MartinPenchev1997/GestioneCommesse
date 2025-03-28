@@ -9,11 +9,11 @@ import { AuthRequest, AuthResponse, AuthService } from 'src/app/services/auth.se
   styleUrls: ['./login.component.scss']
 })
 export class LoginComponent {
-  credentials: AuthRequest = { username: '', password: '' };
+  credentials: AuthRequest = { username: '', password: '', role: '' };
   message: string = '';
 
   constructor(private authService: AuthService, private router: Router) {
-    if(this.authService.isAuthenticated())
+    if (this.authService.isAuthenticated())
       this.router.navigate(['/calendar']);
   }
 
@@ -23,6 +23,7 @@ export class LoginComponent {
         // Salva il token in localStorage o in un service dedicato
         localStorage.setItem('token', response.Token);
         localStorage.setItem('refreshToken', response.RefreshToken);
+        localStorage.setItem('authUser', response.LoggedUser);
         this.message = 'Login effettuato con successo.';
 
         this.router.navigate(['/calendar']);
@@ -33,14 +34,18 @@ export class LoginComponent {
     });
   }
 
+  // register() {
+  //   this.authService.register(this.credentials).subscribe({
+  //     next: (response) => {
+  //       this.message = 'Registrazione effettuata con successo.';
+  //     },
+  //     error: (err) => {
+  //       this.message = 'Errore durante la registrazione: ' + err.error;
+  //     }
+  //   });
+  // }
+
   register() {
-    this.authService.register(this.credentials).subscribe({
-      next: (response) => {
-        this.message = 'Registrazione effettuata con successo.';
-      },
-      error: (err) => {
-        this.message = 'Errore durante la registrazione: ' + err.error;
-      }
-    })
+    this.router.navigate(['/signin']);
   }
 }

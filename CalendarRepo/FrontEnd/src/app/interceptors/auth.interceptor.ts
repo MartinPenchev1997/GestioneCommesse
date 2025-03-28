@@ -46,7 +46,8 @@ export class AuthInterceptor implements HttpInterceptor {
       if (refreshToken) {
         const tokenData = {
           Token: localStorage.getItem('token')!,
-          RefreshToken: localStorage.getItem('refreshToken')!
+          RefreshToken: localStorage.getItem('refreshToken')!,
+          LoggedUser: localStorage.getItem('authUser')!,
         };
         return this.authService.refreshToken(tokenData).pipe(
           switchMap((tokenResponse: AuthResponse) => {
