@@ -1,4 +1,5 @@
-﻿using CalendarRepo.Dto.Auth;
+﻿using Azure.Core;
+using CalendarRepo.Dto.Auth;
 using CalendarRepo.Models;
 using CalendarRepo.Repository;
 using Microsoft.AspNetCore.Authorization;
@@ -22,6 +23,21 @@ namespace CalendarRepo.Controllers
             _config = config;
         }
 
+        [HttpGet("getall")]
+        [Authorize(Roles = "Admin")]
+        public async Task<IActionResult> GetAll()
+        {
+            try
+            {
+                return Ok(await _unitOfWork.Users.GetAllAsync());
+
+            }
+            catch (Exception ex)
+            {
+                return BadRequest(ex.Message);
+            }
+        }
+
         [HttpPost("register")]
         public async Task<IActionResult> Register([FromBody] AuthRequest request)
         {
@@ -35,7 +51,8 @@ namespace CalendarRepo.Controllers
                 {
                     Username = request.Username,
                     PasswordHash = ComputeHash(request.Password),
-                    RefreshToken = ""
+                    RefreshToken = "",
+                    Role = string.IsNullOrEmpty(request.Role) ? "User" : request.Role
                 };
 
                 await _unitOfWork.Users.AddAsync(user);
@@ -46,7 +63,7 @@ namespace CalendarRepo.Controllers
             {
                 return BadRequest(ex.Message);
             }
-            
+
         }
 
         [HttpPost("login")]
@@ -65,21 +82,18 @@ namespace CalendarRepo.Controllers
                 _unitOfWork.Users.Update(user);
                 await _unitOfWork.CompleteAsync();
 
-                return Ok(new AuthResponse { Token = token, RefreshToken = refreshToken });
+                return Ok(new AuthResponse { Token = token, RefreshToken = refreshToken, LoggedUser = request.Username });
             }
             catch (Exception ex)
             {
                 return Unauthorized("Credenziali non valide.");
             }
-            
+
         }
 
         [HttpPost("refresh")]
         public async Task<IActionResult> Refresh([FromBody] AuthResponse tokenRequest)
         {
-            // Nota: in un contesto reale dovresti validare il token e trovare l'utente corrispondente
-            // Per semplicità assumiamo che il refresh token venga passato correttamente
-            //var user = (await _unitOfWork.Users.GetByUsernameAsync(User.Identity?.Name))!;
             var user = (await _unitOfWork.Users.GetByTokenAsync(tokenRequest.RefreshToken))!;
             if (user == null || user.RefreshToken != tokenRequest.RefreshToken || user.RefreshTokenExpiryTime < DateTime.UtcNow)
                 return Unauthorized("Refresh token non valido o scaduto.");
@@ -91,7 +105,7 @@ namespace CalendarRepo.Controllers
             _unitOfWork.Users.Update(user);
             await _unitOfWork.CompleteAsync();
 
-            return Ok(new AuthResponse { Token = newToken, RefreshToken = newRefreshToken });
+            return Ok(new AuthResponse { Token = newToken, RefreshToken = newRefreshToken, LoggedUser = tokenRequest.LoggedUser });
         }
 
         [HttpPost("logout")]
@@ -109,6 +123,26 @@ namespace CalendarRepo.Controllers
             await _unitOfWork.CompleteAsync();
 
             return Ok();
+        }
+
+        [HttpDelete("delete/{userId}")]
+        [Authorize(Roles = "Admin")]
+        public async Task<IActionResult> DeleteUser(int userId)
+        {
+            try
+            {
+                var user = await _unitOfWork.Users.GetByIdAsync(userId);
+                if(user is null)
+                    return BadRequest("Utente non trovato");
+
+                _unitOfWork.Users.Delete(user);
+                await _unitOfWork.CompleteAsync();
+                return Ok();
+            }
+            catch (Exception ex)
+            {
+                return BadRequest(ex.Message);
+            }
         }
 
         // Funzione di utilità per hashare la password

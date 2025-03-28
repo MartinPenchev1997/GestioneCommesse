@@ -1,4 +1,5 @@
-﻿using CalendarRepo.Models;
+﻿using CalendarRepo.Dto.Auth;
+using CalendarRepo.Models;
 using CalendarRepo.Repository;
 using Microsoft.EntityFrameworkCore;
 
@@ -10,6 +11,15 @@ namespace CalendarRepo.Database.DbRepository
         public UserRepository(AppDbContext context)
         {
             _context = context;
+        }
+        public async Task<List<UserDto>> GetAllAsync()
+        {
+            return await _context.Utenti.Select(s => new UserDto
+            {
+                Role = s.Role,
+                Username = s.Username,
+                Id = s.Id
+            }).ToListAsync();
         }
         public async Task AddAsync(Utenti user)
         {
@@ -31,6 +41,11 @@ namespace CalendarRepo.Database.DbRepository
         public void Update(Utenti user)
         {
             _context.Utenti.Update(user);
+        }
+        
+        public void Delete(Utenti user)
+        {
+            _context.Utenti.Remove(user);
         }
     }
 }

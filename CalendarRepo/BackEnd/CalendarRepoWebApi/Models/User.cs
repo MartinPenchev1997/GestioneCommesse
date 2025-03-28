@@ -14,5 +14,6 @@ namespace CalendarRepo.Models
         // Campi per il refresh token
         public string RefreshToken { get; set; }
         public DateTime? RefreshTokenExpiryTime { get; set; }
+        public string Role { get; set; } = "User";
     }
 }

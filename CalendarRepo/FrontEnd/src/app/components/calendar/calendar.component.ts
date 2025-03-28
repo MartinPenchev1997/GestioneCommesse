@@ -15,6 +15,8 @@ import { ReminderService } from 'src/app/services/reminder.service';
 import { CommesseService } from 'src/app/services/commesse.service';
 import { ToastrService } from 'ngx-toastr';
 import { concatMap, from } from 'rxjs';
+import { FormBuilder, FormGroup } from '@angular/forms';
+import { MatMenuTrigger } from '@angular/material/menu';
 
 @Component({
   selector: 'app-calendar',
@@ -28,12 +30,15 @@ export class CalendarComponent implements OnInit, OnDestroy {
   allEvents: Commesse[] = [];
   // filteredEvents: CalendarEvent[] = [];
 
+  filterForm: FormGroup | undefined;
+
   showSpinner = false;
   constructor(
     private commesseService: CommesseService,
     private reminderService: ReminderService,
     public dialog: MatDialog,
-    private toastr: ToastrService
+    private toastr: ToastrService,
+    private fb: FormBuilder
   ) { }
   ngOnDestroy(): void {
     // this.stopReminders();
@@ -41,6 +46,13 @@ export class CalendarComponent implements OnInit, OnDestroy {
 
   ngOnInit(): void {
     this.loadEvents();
+
+    this.filterForm = this.fb.group({
+      title: [''],
+      minHours: [''],
+      maxHours: [''],
+      maintenanceHours: [false]
+    });
 
     // this.startReminders();
   }
@@ -66,13 +78,26 @@ export class CalendarComponent implements OnInit, OnDestroy {
           note: e.Note
         }));
 
-        this.applyFilter({}); // inizialmente nessun filtro
+        // this.applyFilter({}); // inizialmente nessun filtro
       },
       error: (err) => {
         this.toastr.error('Errore caricamento commesse');
         this.showSpinner = false;
       }
     });
+  }
+
+  applyFilters(menuTrigger: MatMenuTrigger) {
+    const filters = this.filterForm!.value;
+    console.log('Filtri applicati:', filters);
+    this.applyFilter(filters);
+    menuTrigger.closeMenu();
+  }
+
+  resetFilters(menuTrigger: MatMenuTrigger) {
+    this.filterForm!.reset();
+    this.loadEvents();
+    menuTrigger.closeMenu();
   }
 
   // Metodi per attivare/disattivare i promemoria

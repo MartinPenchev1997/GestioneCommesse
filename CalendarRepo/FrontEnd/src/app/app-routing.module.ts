@@ -5,6 +5,8 @@ import { ReportComponent } from './components/report/report.component'; // Impor
 import { DashboardComponent } from './dashboard/dashboard.component'; // Import DashboardComponent
 import { BlankLayoutComponent } from './layouts/blank-layout/blank-layout.component';
 import { FullLayoutComponent } from './layouts/full-layout/full.component';
+import { AdminGuard } from '@auth/admin.guard';
+import { SettingsComponent } from './administration/settings/settings.component';
 
 export const routes: Routes = [
   {
@@ -29,6 +31,7 @@ export const routes: Routes = [
       { path: 'calendar', component: CalendarComponent, canActivate: [AuthGuard] },
       { path: 'report', component: ReportComponent, canActivate: [AuthGuard] },
       { path: 'dashboard', component: DashboardComponent, canActivate: [AuthGuard] },
+      { path: 'settings', component: SettingsComponent, canActivate: [AuthGuard, AdminGuard] },
       { path: '**', redirectTo: '/404' }
     ]
   }

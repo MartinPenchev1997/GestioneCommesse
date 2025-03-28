@@ -1,4 +1,4 @@
-<div class="calendar-header">
+<!-- <div class="calendar-header">
   <div class="center-buttons">
     <button mat-button (click)="previousYear()">« Anno Precedente</button>
     <button mat-button (click)="previousMonth()">‹ Mese Precedente</button>
@@ -14,14 +14,97 @@
   <button mat-button color="primary" (click)="exportCSV()">Export CSV</button>
   <button mat-button color="accent" (click)="exportPDF()">Export PDF</button>
 
-  <!-- Importazione: bottone per importare JSON -->
   <button mat-button color="warn" (click)="triggerFileInput()">Import JSON</button>
 
-  <!-- File input nascosto -->
   <input type="file" id="fileInput" accept=".json" (change)="importJSON($event)">
+</div> -->
+
+<div class="calendar-header">
+  <!-- Navigazione -->
+  <div class="center-buttons">
+    <button mat-icon-button (click)="previousYear()" matTooltip="Anno Precedente">
+      <mat-icon>keyboard_double_arrow_left</mat-icon>
+    </button>
+    <button mat-icon-button (click)="previousMonth()" matTooltip="Mese Precedente">
+      <mat-icon>chevron_left</mat-icon>
+    </button>
+
+    <span class="calendar-title">{{ viewDate | date: 'MMMM yyyy' }}</span>
+
+    <button mat-icon-button (click)="nextMonth()" matTooltip="Mese Successivo">
+      <mat-icon>chevron_right</mat-icon>
+    </button>
+    <button mat-icon-button (click)="nextYear()" matTooltip="Anno Successivo">
+      <mat-icon>keyboard_double_arrow_right</mat-icon>
+    </button>
+  </div>
+
+  <!-- Azioni -->
+  <div class="actions">
+    <!-- Dropdown Filtra -->
+    <mat-menu #filterMenu="matMenu">
+      <form [formGroup]="filterForm!" class="filter-container" (click)="$event.stopPropagation()">
+        <mat-form-field appearance="fill">
+          <mat-label>Commessa</mat-label>
+          <input matInput formControlName="title" placeholder="Inserisci il titolo">
+        </mat-form-field>
+
+        <div class="hour-range">
+          <mat-form-field>
+            <input matInput type="number" placeholder="Dalle" formControlName="minHours">
+          </mat-form-field>
+          <mat-form-field>
+            <input matInput type="number" placeholder="Alle" formControlName="maxHours">
+          </mat-form-field>
+        </div>
+
+        <section class="example-section">
+          <mat-checkbox formControlName="maintenanceHours">Manutenzione</mat-checkbox>
+        </section>
+
+        <div class="filter-buttons">
+          <button mat-button color="primary" (click)="applyFilters(filterMenuTrigger)">Applica</button>
+          <button mat-button color="warn" (click)="resetFilters(filterMenuTrigger)">Reset</button>
+        </div>
+      </form>
+    </mat-menu>
+
+    <button mat-button [matMenuTriggerFor]="filterMenu" #filterMenuTrigger="matMenuTrigger">
+      <mat-icon>filter_list</mat-icon> Filtra
+    </button>
+
+    <button mat-button color="primary" (click)="startReminders()">
+      <mat-icon>notifications_active</mat-icon> Attiva
+    </button>
+    <button mat-button color="warn" (click)="stopReminders()">
+      <mat-icon>notifications_off</mat-icon> Disattiva
+    </button>
+
+    <!-- Menu Esportazione -->
+    <mat-menu #exportMenu="matMenu">
+      <button mat-menu-item (click)="exportData()">
+        <mat-icon>download</mat-icon> Esporta
+      </button>
+      <button mat-menu-item (click)="exportCSV()">
+        <mat-icon>description</mat-icon> Esporta CSV
+      </button>
+      <button mat-menu-item (click)="exportPDF()">
+        <mat-icon>picture_as_pdf</mat-icon> Esporta PDF
+      </button>
+    </mat-menu>
+    <button mat-button [matMenuTriggerFor]="exportMenu">
+      <mat-icon>file_download</mat-icon> Esporta
+    </button>
+
+    <!-- Importazione -->
+    <button mat-button color="accent" (click)="triggerFileInput()">
+      <mat-icon>upload</mat-icon> Importa JSON
+    </button>
+    <input type="file" id="fileInput" accept=".json" (change)="importJSON($event)">
+  </div>
 </div>
 
-<app-filter (filterChange)="applyFilter($event)"></app-filter>
+<!-- <app-filter (filterChange)="applyFilter($event)"></app-filter> -->
 
 
 <mwl-calendar-month-view [viewDate]="viewDate" [events]="calendarEvents" (eventClicked)="eventClicked($event)"

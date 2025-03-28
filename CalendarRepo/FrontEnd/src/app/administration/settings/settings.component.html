@@ -1,0 +1,52 @@
+<div class="settings-container">
+  <h2>Gestione Utenti</h2>
+  <div class="table-filter">
+    <mat-form-field appearance="outline">
+      <mat-label>Filtra utenti</mat-label>
+      <input matInput (keyup)="applyFilter($event)" placeholder="Cerca per username, ruolo, etc.">
+    </mat-form-field>
+  </div>
+
+
+  <mat-table [dataSource]="dataSource" matSort class="mat-elevation-z8">
+
+    <!-- Colonna ID -->
+    <ng-container matColumnDef="id">
+      <mat-header-cell *matHeaderCellDef mat-sort-header> ID </mat-header-cell>
+      <mat-cell *matCellDef="let user"> {{user.Id}} </mat-cell>
+    </ng-container>
+
+    <!-- Colonna Username -->
+    <ng-container matColumnDef="username">
+      <mat-header-cell *matHeaderCellDef> Username </mat-header-cell>
+      <mat-cell *matCellDef="let user"> {{user.Username}} </mat-cell>
+    </ng-container>
+
+    <!-- Colonna Ruolo -->
+    <ng-container matColumnDef="ruolo">
+      <mat-header-cell *matHeaderCellDef> Ruolo </mat-header-cell>
+      <mat-cell *matCellDef="let user">
+        <mat-icon style="color: green !important;" *ngIf="user.Role === 'Admin'">verified_user</mat-icon>
+        <mat-icon style="color: dodgerblue !important" *ngIf="user.Role !== 'Admin'">supervised_user_circle</mat-icon>
+        {{user.Role}}
+      </mat-cell>
+    </ng-container>
+
+    <!-- Colonna Azioni -->
+    <ng-container matColumnDef="actions">
+      <mat-header-cell *matHeaderCellDef> Azioni </mat-header-cell>
+      <mat-cell *matCellDef="let user">
+        <button mat-raised-button color="warn" (click)="deleteUser(user.Id)">
+          <mat-icon>cancel</mat-icon>
+          Elimina
+        </button>
+      </mat-cell>
+    </ng-container>
+
+    <mat-header-row *matHeaderRowDef="displayedColumns"></mat-header-row>
+    <mat-row *matRowDef="let row; columns: displayedColumns;"></mat-row>
+
+  </mat-table>
+  <!-- Paginator -->
+  <mat-paginator [pageSizeOptions]="[5, 10, 25]" showFirstLastButtons></mat-paginator>
+</div>

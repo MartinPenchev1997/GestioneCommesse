@@ -1,6 +1,7 @@
 import { Component, Renderer2 } from "@angular/core";
 import { Router } from "@angular/router";
 import { AuthService } from "src/app/services/auth.service";
+import { decodeToken, getClaims, getRole } from "src/app/shared/helper/jwtDecode.helper";
 
 @Component({
   selector: 'full-component',
@@ -9,8 +10,21 @@ import { AuthService } from "src/app/services/auth.service";
 })
 export class FullLayoutComponent {
   isSidebarOpen = true; // Sidebar aperta di default su desktop
-
-  constructor(private renderer: Renderer2, private authService: AuthService, private router: Router) { }
+  loggedUser: string = '';
+  isAdmin: boolean = false;
+  constructor(private renderer: Renderer2, private authService: AuthService, private router: Router) {
+    this.loggedUser = this.authService.getLoggedUser();
+    const token = localStorage.getItem('token');
+    if (token) {
+      const decoded: any = decodeToken(token);
+      if (decoded) {
+        this.loggedUser = getClaims(decoded) || 'Utente';
+        this.isAdmin = getRole(decoded) === 'Admin';
+      }
+      // this.loggedUser = decoded.name || decoded.unique_name || 'Utente';
+      // this.isAdmin = decoded.role === 'Admin';
+    }
+  }
 
   toggleSidebar() {
     this.isSidebarOpen = !this.isSidebarOpen;
@@ -24,7 +38,6 @@ export class FullLayoutComponent {
   }
 
   doLogout() {
-    debugger;
     this.authService.logout().subscribe({
       next: (result) => {
         this.router.navigate(['/login']);
@@ -35,3 +48,4 @@ export class FullLayoutComponent {
     });
   }
 }
+
