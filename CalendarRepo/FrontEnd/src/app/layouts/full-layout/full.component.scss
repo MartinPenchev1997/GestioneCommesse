@@ -86,7 +86,7 @@
 
 mat-sidenav {
   width: 250px;
-  background: #81d5ff;
+  background: #4D55CC;
   color: white;
 }
 
@@ -136,6 +136,10 @@ mat-nav-list a:hover {
 
   mat-toolbar {
     flex: 0 1 10% !important;
+  }
+
+  mat-toolbar#topbar {
+    background-color: #4D55CC !important;
   }
 
   mat-toolbar.footer {

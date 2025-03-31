@@ -1,10 +1,24 @@
 .dashboard-container {
-  padding: 20px;
+  max-width: 900px;
+  margin: auto;
+  text-align: center;
 }
 
 .chart-container {
-  display: block;
-  width: 100%;
-  max-width: 800px;
-  margin: 30px auto;
+  margin: 20px 0;
+}
+
+button {
+  margin: 5px;
+  padding: 5px 10px;
+  border: none;
+  background: #007bff;
+  color: white;
+  cursor: pointer;
+  border-radius: 5px;
+}
+
+button:disabled {
+  background: #ccc;
+  cursor: not-allowed;
 }

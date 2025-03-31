@@ -211,6 +211,7 @@ export class CalendarComponent implements OnInit, OnDestroy {
         this.commesseService.addCommessa(newEvent).subscribe({
           next: (response) => {
             this.toastr.success('Commessa creata');
+            this.loadEvents(); // ricarica gli eventi per aggiornare il calendario
             this.showSpinner = false;
           },
           error: (err) => {
@@ -219,7 +220,6 @@ export class CalendarComponent implements OnInit, OnDestroy {
           }
         });
       }
-      this.loadEvents(); // ricarica gli eventi per aggiornare il calendario
     });
   }
 

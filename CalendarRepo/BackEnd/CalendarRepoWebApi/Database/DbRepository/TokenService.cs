@@ -26,14 +26,15 @@ namespace CalendarRepo.Database.DbRepository
             {
                 new Claim(ClaimTypes.Name, user.Username),
                 new Claim("id", user.Id.ToString()),
-                new Claim(ClaimTypes.Role, user.Role)
+                new Claim(ClaimTypes.Role, user.Role),
+                new Claim("LastActivity", DateTime.Now.ToString())
             };
 
             var token = new JwtSecurityToken(
                 issuer: null,
                 audience: null,
                 claims: claims,
-                expires: DateTime.UtcNow.AddMinutes(double.Parse(jwtSettings["TokenLifetimeMinutes"])),
+                expires: DateTime.Now.AddMinutes(double.Parse(jwtSettings["TokenLifetimeMinutes"])),
                 signingCredentials: creds
             );
             return new JwtSecurityTokenHandler().WriteToken(token);

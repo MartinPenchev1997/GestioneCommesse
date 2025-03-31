@@ -2,6 +2,7 @@
 import { Injectable } from '@angular/core';
 import { EventService } from './event.service';
 import { Commesse } from '../models/commessa.model';
+import { CommesseService } from './commesse.service';
 
 @Injectable({
   providedIn: 'root'
@@ -9,7 +10,7 @@ import { Commesse } from '../models/commessa.model';
 export class ReminderService {
   private reminderInterval: any;
 
-  constructor(private eventService: EventService) { }
+  constructor(private commesseService: CommesseService) { }
 
   // Avvia il controllo periodico per i promemoria
   startReminders(): void {
@@ -42,23 +43,34 @@ export class ReminderService {
 
   // Controlla se ci sono eventi imminenti e invia una notifica
   private checkReminders(): void {
-    const events: Commesse[] = this.eventService.getEvents();
-    const now = new Date();
-    // Impostiamo un intervallo di promemoria: eventi che iniziano entro i prossimi 1000 minuti
-    const reminderLimit = new Date(now.getTime() + 1000 * 60000);
+    this.commesseService.getCommesse().subscribe({
+      next: (commesse: Commesse[]) => {
+        const events: Commesse[] = commesse;
+        const now = new Date();
+        // Impostiamo un intervallo di promemoria: eventi che iniziano entro la prossima settimana
+        const reminderLimit = new Date(now.getTime() + 7 * 24 * 60 * 60 * 1000)
 
-    events.forEach(e => {
-      const eventDate = new Date(e.Date);
-      // Se l'evento è futuro e rientra nell'intervallo di 15 minuti
-      if (eventDate > now && eventDate <= reminderLimit) {
-        setTimeout(() => {
-          // Se le notifiche sono supportate e il permesso è stato concesso
-          if ('Notification' in window && Notification.permission === 'granted') {
-            new Notification('Promemoria Commesse', {
-              body: `La commessa "${e.Title}" inizia alle ${eventDate.toLocaleTimeString()}.`
-            });
+        events.forEach(e => {
+          const eventDate = new Date(e.Date);
+          // Se l'evento è futuro e rientra nell'intervallo di 15 minuti
+          if (eventDate > now && eventDate <= reminderLimit) {
+            setTimeout(() => {
+              // Se le notifiche sono supportate e il permesso è stato concesso
+              let startEvent = new Date(eventDate);
+              let endEvent = new Date(eventDate);
+              startEvent.setHours(e.Start);
+              endEvent.setHours(e.End);
+              if ('Notification' in window && Notification.permission === 'granted') {
+                new Notification(`Commessa "${e.Title.toUpperCase()}"`, {
+                  body: `Inizio: ${startEvent.toLocaleTimeString()}. Fine: ${endEvent.toLocaleTimeString()}`
+                });
+              }
+            }, 5000);
           }
-        }, 5000);
+        });
+      },
+      error: (error) => {
+        console.error('Errore durante il recupero delle commesse:', error);
       }
     });
   }

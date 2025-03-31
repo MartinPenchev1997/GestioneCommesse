@@ -78,7 +78,7 @@ namespace CalendarRepo.Controllers
                 var token = _tokenService.CreateToken(user);
                 var refreshToken = _tokenService.CreateRefreshToken();
                 user.RefreshToken = refreshToken;
-                user.RefreshTokenExpiryTime = DateTime.UtcNow.AddDays(double.Parse(_config["JwtSettings:RefreshTokenLifetimeDays"]));
+                user.RefreshTokenExpiryTime = DateTime.Now.AddDays(double.Parse(_config["JwtSettings:RefreshTokenLifetimeDays"]));
                 _unitOfWork.Users.Update(user);
                 await _unitOfWork.CompleteAsync();
 
@@ -95,13 +95,13 @@ namespace CalendarRepo.Controllers
         public async Task<IActionResult> Refresh([FromBody] AuthResponse tokenRequest)
         {
             var user = (await _unitOfWork.Users.GetByTokenAsync(tokenRequest.RefreshToken))!;
-            if (user == null || user.RefreshToken != tokenRequest.RefreshToken || user.RefreshTokenExpiryTime < DateTime.UtcNow)
+            if (user == null || user.RefreshToken != tokenRequest.RefreshToken || user.RefreshTokenExpiryTime < DateTime.Now)
                 return Unauthorized("Refresh token non valido o scaduto.");
 
             var newToken = _tokenService.CreateToken(user);
             var newRefreshToken = _tokenService.CreateRefreshToken();
             user.RefreshToken = newRefreshToken;
-            user.RefreshTokenExpiryTime = DateTime.UtcNow.AddDays(double.Parse(_config["JwtSettings:RefreshTokenLifetimeDays"]));
+            user.RefreshTokenExpiryTime = DateTime.Now.AddDays(double.Parse(_config["JwtSettings:RefreshTokenLifetimeDays"]));
             _unitOfWork.Users.Update(user);
             await _unitOfWork.CompleteAsync();
 
